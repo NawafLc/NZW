@@ -19,6 +19,9 @@ def config_dir() -> Path:
     return base / "NZW"
 
 
+SETTINGS_VERSION = 2
+
+
 @dataclass
 class Loadout:
     weapon: str = ""
@@ -31,6 +34,7 @@ class Loadout:
 
 @dataclass
 class Settings:
+    version: int = SETTINGS_VERSION
     game_root: str = ""
     client: str = "boiii"  # "boiii" or "vanilla"
     boiii_exe: str = "boiii.exe"
@@ -38,7 +42,7 @@ class Settings:
     skip_intro: bool = True
     skip_cinematics: bool = True
     unsafe_lua: bool = False
-    map_command: str = "map"  # "map" or "devmap"
+    map_command: str = "devmap"  # "devmap" sets up the ZM session; plain "map" can crash from the title screen
     autostart_delay_ms: int = 1000
     uncap_menu_fps: bool = False
     unlock_gobblegums: bool = False
@@ -57,6 +61,9 @@ class Settings:
         known = {f.name for f in fields(cls)}
         kwargs = {k: v for k, v in data.items() if k in known and k != "loadout"}
         s = cls(**kwargs)
+        if data.get("version", 1) < 2 and s.map_command == "map":
+            s.map_command = "devmap"  # v1 default; `map` crashes from the title screen
+        s.version = SETTINGS_VERSION
         lo = data.get("loadout")
         if isinstance(lo, dict):
             lo_known = {f.name for f in fields(Loadout)}

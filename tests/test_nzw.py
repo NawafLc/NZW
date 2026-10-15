@@ -200,3 +200,11 @@ def test_cli_dry_run(steam, capsys, monkeypatch, tmp_path):
     assert cli.main(["--game-root", str(root), "--play", "Leviathan", "--mod", "222", "--dry-run"]) == 0
     out = capsys.readouterr().out
     assert "nzw_autostart_map zm_leviathan" in out and "nzw_autostart_mod 222" in out
+
+
+def test_v1_settings_migrate_to_devmap(tmp_path):
+    path = tmp_path / "s.json"
+    path.write_text('{"map_command": "map"}')
+    assert settings_mod.load(path).map_command == "devmap"
+    path.write_text('{"version": 2, "map_command": "map"}')
+    assert settings_mod.load(path).map_command == "map"

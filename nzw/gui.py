@@ -233,7 +233,7 @@ class App:
         r += 1
         ttk.Label(f, text="Map command").grid(row=r, column=0, sticky="w", pady=(10, 0))
         self.map_command = tk.StringVar()
-        ttk.Combobox(f, textvariable=self.map_command, values=["map", "devmap"], state="readonly", width=10).grid(
+        ttk.Combobox(f, textvariable=self.map_command, values=["devmap", "map"], state="readonly", width=10).grid(
             row=r, column=1, sticky="w", pady=(10, 0), padx=6)
         r += 1
         ttk.Label(f, text="Extra arguments").grid(row=r, column=0, sticky="w", pady=(8, 0))
@@ -274,7 +274,7 @@ class App:
         s.display = self.display.get()
         for name, var in self.flags.items():
             setattr(s, name, var.get())
-        s.map_command = self.map_command.get() or "map"
+        s.map_command = self.map_command.get() or "devmap"
         s.extra_args = self.extra_args.get()
         binds = {}
         for line in self.binds_text.get("1.0", "end").splitlines():

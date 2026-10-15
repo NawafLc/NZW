@@ -40,7 +40,7 @@ local wantModAlt = dvarString("nzw_autostart_mod_alt")
 local mapName = dvarString("nzw_autostart_map")
 local mapCmd = dvarString("nzw_autostart_cmd")
 if mapCmd == "" then
-  mapCmd = "map"
+  mapCmd = "devmap"
 end
 
 local function abort(reason)

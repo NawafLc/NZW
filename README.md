@@ -44,7 +44,7 @@ boiii.exe -launch -nointro -nocinematics -borderless
 
 NZW does not use `+map` here, because it can run before the frontend and LPC have finished initialising. Instead, before launching, NZW installs two scripts into `<GameRoot>/boiii/`. The Steam `BlackOps3.exe` never reads that folder.
 
-- `ui_scripts/nzw_autostart/__init__.lua`: on the first `core_frontend` load, it mounts the requested mod (or `usermaps`) with `LuaUtils.Mods_LoadMod`. That reloads the frontend once. The script then runs `map <name>` and clears `nzw_autostart`, so returning to the menu after a match doesn't start the map again. It gives up after two failed mod loads. If the game wasn't started by NZW, the script does nothing.
+- `ui_scripts/nzw_autostart/__init__.lua`: on the first `core_frontend` load, it mounts the requested mod (or `usermaps`) with `LuaUtils.Mods_LoadMod`. That reloads the frontend once. The script then runs `devmap <name>` and clears `nzw_autostart`, so returning to the menu after a match doesn't start the map again. It gives up after two failed mod loads. If the game wasn't started by NZW, the script does nothing.
 - `custom_scripts/zm/nzw_loadout.gsc`: on the player's first spawn, it reads the `nzw_*` dvars and gives the weapon (optionally Pack-a-Punched), perks, bonus points, GobbleGum pack and a starting gum. It skips perks and gums the map doesn't have.
 
 NZW also makes these changes before launching. All of them are additive:
@@ -77,7 +77,7 @@ I read the boiii-free source while building this. It differs from the original s
 
 These parts can't be tested without Windows and the game:
 
-- **Auto-start timing.** If `map` fires too early on your machine, raise `nzw_autostart_delay` in Options → Extra arguments (`+set nzw_autostart_delay 3000`), or switch the map command to `devmap`.
+- **Auto-start timing.** If `map` fires too early on your machine, raise `nzw_autostart_delay` in Options → Extra arguments (`+set nzw_autostart_delay 3000`), or try the other map command in Options. Plain `map` from the title screen crashed in testing with a missing `zm_perks` HUD asset, so `devmap` is the default.
 - **Mod plus custom map together** depends on the engine mounting `usermaps` alongside an active mod, as boiii's `CL_SetupForNewServerMap` hook does. The vanilla client mounts only one `fs_game`.
 - **The GobbleGum pack override** replaces `self.bgb_pack` after spawn. It works if the map reads that array when a machine is used, which is how stock `_zm_bgb.gsc` behaves.
 - **Display names in the weapon and gum lists** come from community naming. Every field is editable, so you can type any internal name.
