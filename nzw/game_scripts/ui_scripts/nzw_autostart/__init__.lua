@@ -5,7 +5,15 @@
 -- which reloads the frontend and runs this script again, then starts the map
 -- and clears nzw_autostart so returning to the menu after a match stays put.
 
-if Engine.GetCurrentMap() ~= "core_frontend" then
+-- Progress is written to the nzw_autostart_status dvar; type
+-- `nzw_autostart_status` in the boiii console to read it.
+local function status(text)
+  pcall(Engine.SetDvar, "nzw_autostart_status", text)
+  print("[NZW] " .. text)
+end
+
+local currentMap = Engine.GetCurrentMap()
+if currentMap ~= "core_frontend" then
   return
 end
 
@@ -22,8 +30,10 @@ local function dvarInt(name)
 end
 
 if dvarInt("nzw_autostart") ~= 1 then
+  status("loaded, inactive (nzw_autostart=" .. dvarString("nzw_autostart") .. ")")
   return
 end
+status("loaded, active")
 
 local wantMod = dvarString("nzw_autostart_mod")
 local wantModAlt = dvarString("nzw_autostart_mod_alt")
@@ -35,7 +45,7 @@ end
 
 local function abort(reason)
   Engine.SetDvar("nzw_autostart", 0)
-  print("[NZW] auto-start aborted: " .. reason)
+  status("aborted: " .. reason)
 end
 
 local function activeMod()
@@ -58,7 +68,7 @@ if wantMod ~= "" and current ~= wantMod and (wantModAlt == "" or current ~= want
     return
   end
   Engine.SetDvar("nzw_autostart_tries", tries + 1)
-  print("[NZW] loading mod " .. wantMod)
+  status("loading mod " .. wantMod .. " (active: '" .. current .. "')")
   local ok = pcall(LuaUtils.Mods_LoadMod, wantMod)
   if not ok then
     Engine.Exec(0, "loadmod " .. wantMod)
@@ -74,7 +84,7 @@ if delay <= 0 then
 end
 
 local function launch()
-  print("[NZW] starting " .. mapCmd .. " " .. mapName)
+  status("ran: " .. mapCmd .. " " .. mapName)
   Engine.Exec(0, mapCmd .. " " .. mapName)
 end
 
@@ -83,6 +93,8 @@ local scheduled = pcall(function()
   local root = LUI.roots.UIRoot0
   root:addElement(LUI.UITimer.newElementTimer(delay, true, launch))
 end)
-if not scheduled then
+if scheduled then
+  status("waiting " .. delay .. "ms to run " .. mapCmd .. " " .. mapName)
+else
   launch()
 end
