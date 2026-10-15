@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nzw"
+version = "0.1.0"
+description = "Fast external launcher for Call of Duty: Black Ops III Zombies"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+nzw = "nzw.cli:main"
+
+[project.gui-scripts]
+nzw-gui = "nzw.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nzw*"]
+
+[tool.setuptools.package-data]
+nzw = ["game_scripts/**/*"]

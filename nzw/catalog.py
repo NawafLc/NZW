@@ -1,0 +1,146 @@
+"""Static catalogs: official Zombies maps, perks, weapons and GobbleGums.
+
+All values are the engine's internal names. The GUI shows the display names
+but every combo box stays editable, so a name missing here can still be typed.
+"""
+
+APP_ID = "311210"
+
+# (internal map name, display name, group)
+OFFICIAL_MAPS = [
+    ("zm_zod", "Shadows of Evil", "Base"),
+    ("zm_factory", "The Giant", "Base"),
+    ("zm_castle", "Der Eisendrache", "Awakening"),
+    ("zm_island", "Zetsubou No Shima", "Eclipse"),
+    ("zm_stalingrad", "Gorod Krovi", "Descent"),
+    ("zm_genesis", "Revelations", "Revelations"),
+    ("zm_prototype", "Nacht der Untoten", "Chronicles"),
+    ("zm_asylum", "Verruckt", "Chronicles"),
+    ("zm_sumpf", "Shi No Numa", "Chronicles"),
+    ("zm_theater", "Kino der Toten", "Chronicles"),
+    ("zm_cosmodrome", "Ascension", "Chronicles"),
+    ("zm_temple", "Shangri-La", "Chronicles"),
+    ("zm_moon", "Moon", "Chronicles"),
+    ("zm_tomb", "Origins", "Chronicles"),
+]
+
+PERKS = [
+    ("specialty_armorvest", "Juggernog"),
+    ("specialty_quickrevive", "Quick Revive"),
+    ("specialty_fastreload", "Speed Cola"),
+    ("specialty_doubletap2", "Double Tap II"),
+    ("specialty_staminup", "Stamin-Up"),
+    ("specialty_deadshot", "Deadshot Daiquiri"),
+    ("specialty_additionalprimaryweapon", "Mule Kick"),
+    ("specialty_widowswine", "Widow's Wine"),
+    ("specialty_electriccherry", "Electric Cherry"),
+]
+
+WEAPONS = [
+    ("ar_standard", "KN-44"),
+    ("ar_accurate", "ICR-1"),
+    ("ar_cqb", "HVK-30"),
+    ("ar_damage", "M8A7"),
+    ("ar_longburst", "Sheiva"),
+    ("ar_marksman", "Man-O-War"),
+    ("smg_standard", "Kuda"),
+    ("smg_versatile", "VMP"),
+    ("smg_fastfire", "Vesper"),
+    ("smg_burst", "Pharo"),
+    ("smg_capacity", "Weevil"),
+    ("lmg_light", "Dingo"),
+    ("lmg_heavy", "48 Dredge"),
+    ("lmg_cqb", "BRM"),
+    ("lmg_slowfire", "Gorgon"),
+    ("shotgun_pump", "KRM-262"),
+    ("shotgun_semiauto", "205 Brecci"),
+    ("shotgun_fullauto", "Haymaker 12"),
+    ("shotgun_precision", "Argus"),
+    ("sniper_fastbolt", "Locus"),
+    ("sniper_fastsemi", "Drakon"),
+    ("sniper_powerbolt", "SVG-100"),
+    ("pistol_standard", "MR6"),
+    ("pistol_burst", "RK5"),
+    ("pistol_fullauto", "L-CAR 9"),
+    ("launcher_standard", "XM-53"),
+    ("ray_gun", "Ray Gun"),
+    ("raygun_mark3", "Ray Gun Mark II"),
+]
+
+GOBBLEGUMS = [
+    "zm_bgb_aftertaste",
+    "zm_bgb_alchemical_antithesis",
+    "zm_bgb_always_done_swiftly",
+    "zm_bgb_anywhere_but_here",
+    "zm_bgb_armamental_accomplishment",
+    "zm_bgb_arms_grace",
+    "zm_bgb_board_games",
+    "zm_bgb_board_to_death",
+    "zm_bgb_burned_out",
+    "zm_bgb_cache_back",
+    "zm_bgb_coagulant",
+    "zm_bgb_crate_power",
+    "zm_bgb_crawl_space",
+    "zm_bgb_danger_closest",
+    "zm_bgb_dead_of_nuclear_winter",
+    "zm_bgb_disorderly_combat",
+    "zm_bgb_ephemeral_enhancement",
+    "zm_bgb_extra_credit",
+    "zm_bgb_eye_candy",
+    "zm_bgb_fatal_contraption",
+    "zm_bgb_fear_in_headlights",
+    "zm_bgb_firing_on_all_cylinders",
+    "zm_bgb_flavor_hexed",
+    "zm_bgb_head_drama",
+    "zm_bgb_idle_eyes",
+    "zm_bgb_immolation_liquidation",
+    "zm_bgb_impatient",
+    "zm_bgb_in_plain_sight",
+    "zm_bgb_kill_joy",
+    "zm_bgb_killing_time",
+    "zm_bgb_licensed_contractor",
+    "zm_bgb_lucky_crit",
+    "zm_bgb_mind_blown",
+    "zm_bgb_near_death_experience",
+    "zm_bgb_newtonian_negation",
+    "zm_bgb_now_you_see_me",
+    "zm_bgb_nowhere_but_there",
+    "zm_bgb_on_the_house",
+    "zm_bgb_perkaholic",
+    "zm_bgb_phoenix_up",
+    "zm_bgb_pop_shocks",
+    "zm_bgb_power_vacuum",
+    "zm_bgb_profit_sharing",
+    "zm_bgb_projectile_vomiting",
+    "zm_bgb_reign_drops",
+    "zm_bgb_respin_cycle",
+    "zm_bgb_round_robbin",
+    "zm_bgb_secret_shopper",
+    "zm_bgb_self_medication",
+    "zm_bgb_shopping_free",
+    "zm_bgb_slaughter_slide",
+    "zm_bgb_soda_fountain",
+    "zm_bgb_stock_option",
+    "zm_bgb_sword_flay",
+    "zm_bgb_temporal_gift",
+    "zm_bgb_tone_death",
+    "zm_bgb_unbearable",
+    "zm_bgb_undead_man_walking",
+    "zm_bgb_unquenchable",
+    "zm_bgb_wall_power",
+    "zm_bgb_whos_keeping_score",
+]
+
+# Videos the vanilla-client path may hide for the duration of a session.
+# Matched case-insensitively against <GameRoot>/video/.
+SKIPPABLE_VIDEOS = [
+    "bo3_global_logo_logosequence.mkv",
+    "zm_frontend_load.mkv",
+    "zm_zod_load_zodloadingmovie.mkv",
+]
+
+DEFAULT_BINDS = {
+    "F9": "fast_restart",
+    "F10": "map_restart",
+    "F11": "quit",
+}
