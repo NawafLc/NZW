@@ -83,18 +83,32 @@ if delay <= 0 then
   delay = 1000
 end
 
+local fired = false
 local function launch()
+  if fired then
+    return
+  end
+  fired = true
   status("ran: " .. mapCmd .. " " .. mapName)
   Engine.Exec(0, mapCmd .. " " .. mapName)
 end
 
 -- Give the frontend a moment to finish initialising before changing level.
-local scheduled = pcall(function()
-  local root = LUI.roots.UIRoot0
-  root:addElement(LUI.UITimer.newElementTimer(delay, true, launch))
-end)
-if scheduled then
-  status("waiting " .. delay .. "ms to run " .. mapCmd .. " " .. mapName)
+-- UIRootFull ticks on the title screen; UIRoot0 (per-controller) may not
+-- until a player presses Start, so it is only a backup.
+local attached = {}
+for _, rootName in ipairs({ "UIRootFull", "UIRoot0" }) do
+  local ok = pcall(function()
+    local root = LUI.roots[rootName]
+    root:addElement(LUI.UITimer.newElementTimer(delay, true, launch))
+  end)
+  if ok then
+    table.insert(attached, rootName)
+  end
+end
+
+if #attached > 0 then
+  status("waiting " .. delay .. "ms (" .. table.concat(attached, "+") .. ") to run " .. mapCmd .. " " .. mapName)
 else
   launch()
 end
