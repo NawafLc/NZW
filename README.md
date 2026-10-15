@@ -13,11 +13,13 @@ You need Windows and Python 3.10 or newer. Tkinter ships with the python.org ins
 
 ```bat
 pip install .
-nzw-gui                                  :: opens the window
-nzw --list                               :: prints detected maps and mods
-nzw --play zm_castle --dry-run           :: prints the command line it would run
-nzw --play "Leviathan" --mod 2631943123  :: launches without the window
+python -m nzw                                      :: opens the window (pythonw -m nzw: no console)
+python -m nzw --list                               :: prints detected maps and mods
+python -m nzw --play zm_castle --dry-run           :: prints the command line it would run
+python -m nzw --play "Leviathan" --mod 2631943123  :: launches without the window
 ```
+
+pip also installs `nzw` and `nzw-gui` commands. They only work if pip's Scripts folder is on your PATH. If you get "not recognized", pip printed that folder in a warning during install; add it to PATH, or keep using `python -m nzw`.
 
 To build a single `.exe`, run `pip install pyinstaller` and then `pyinstaller -w -n NZW --add-data "nzw/game_scripts;nzw/game_scripts" -p . nzw/__main__.py`.
 
