@@ -24,6 +24,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--play", metavar="MAP", help="launch MAP (internal name, Workshop ID or title)")
     p.add_argument("--mod", help="gameplay mod to load with --play")
     p.add_argument("--client", choices=["boiii", "vanilla"])
+    p.add_argument("--probe", action="store_true",
+                   help="start boiii and dump lobby/menu data to <GameRoot>/nzw_probe.txt")
     p.add_argument("--dry-run", action="store_true", help="print the command line without launching")
     args = p.parse_args(argv)
 
@@ -36,6 +38,23 @@ def main(argv: list[str] | None = None) -> int:
         found = discovery.find_game_root()
         if found:
             s.game_root = str(found)
+
+    if args.probe:
+        try:
+            cmd = launch.probe_command(s)
+        except launch.LaunchError as e:
+            print(e, file=sys.stderr)
+            return 2
+        root = Path(s.game_root)
+        out = root / "nzw_probe.txt"
+        out.unlink(missing_ok=True)
+        print("Starting boiii in probe mode. At the title screen press ENTER, open Zombies,")
+        print("then the Solo/Local lobby, wait ~5 seconds and quit the game.")
+        import subprocess
+
+        subprocess.run(cmd, cwd=root)
+        print(f"Probe output: {out}" if out.exists() else "No nzw_probe.txt was written.")
+        return 0
 
     if not (args.list or args.play):
         from .gui import run

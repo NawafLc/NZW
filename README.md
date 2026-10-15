@@ -82,6 +82,10 @@ These parts can't be tested without Windows and the game:
 - **The GobbleGum pack override** replaces `self.bgb_pack` after spawn. It works if the map reads that array when a machine is used, which is how stock `_zm_bgb.gsc` behaves.
 - **Display names in the weapon and gum lists** come from community naming. Every field is editable, so you can type any internal name.
 
+## Probe mode
+
+`python -m nzw --probe` starts boiii with `-unsafe-lua` and installs a script that writes `<GameRoot>/nzw_probe.txt`. The file contains the frontend's `CoD.LobbyButtons`, `LobbyData.UITargets`, the mode-related `Engine` functions, and a log of the session and lobby mode as you click into Zombies. Use it to find the stock calls that put the frontend into Zombies mode. Running `map` or `devmap` from the title screen crashes with a missing `zm_perks` HUD asset, because the session isn't in Zombies mode yet.
+
 ## Development
 
 ```sh

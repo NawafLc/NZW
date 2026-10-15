@@ -166,6 +166,18 @@ def prepare(plan: LaunchPlan, settings: Settings) -> list[str]:
     return log
 
 
+def probe_command(settings: Settings) -> list[str]:
+    """boiii command line that only dumps frontend lobby data (see nzw_probe Lua)."""
+    if not settings.game_root:
+        raise LaunchError("Game folder is not set")
+    root = Path(settings.game_root)
+    exe = root / settings.boiii_exe
+    if not exe.is_file():
+        raise LaunchError(f"{exe.name} not found in {root}")
+    gamefiles.install_scripts(root)
+    return [str(exe), "-launch", "-nointro", "-unsafe-lua", "-windowed", *_set("nzw_probe", 1)]
+
+
 def start(plan: LaunchPlan) -> subprocess.Popen:
     kwargs = {}
     if hasattr(subprocess, "DETACHED_PROCESS"):

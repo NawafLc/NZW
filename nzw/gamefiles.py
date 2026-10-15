@@ -28,6 +28,7 @@ VIDEO_SUFFIX = ".nzwbak"
 
 SCRIPT_FILES = [
     "ui_scripts/nzw_autostart/__init__.lua",
+    "ui_scripts/nzw_probe/__init__.lua",
     "custom_scripts/zm/nzw_loadout.gsc",
 ]
 

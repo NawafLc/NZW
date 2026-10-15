@@ -208,3 +208,10 @@ def test_v1_settings_migrate_to_devmap(tmp_path):
     assert settings_mod.load(path).map_command == "devmap"
     path.write_text('{"version": 2, "map_command": "map"}')
     assert settings_mod.load(path).map_command == "map"
+
+
+def test_probe_command(steam):
+    _, root = steam
+    cmd = launch.probe_command(Settings(game_root=str(root)))
+    assert "-unsafe-lua" in cmd and cmd[-3:] == ["+set", "nzw_probe", "1"]
+    assert (root / "boiii" / "ui_scripts" / "nzw_probe" / "__init__.lua").is_file()
