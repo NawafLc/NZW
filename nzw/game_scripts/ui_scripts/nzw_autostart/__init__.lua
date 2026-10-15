@@ -76,7 +76,27 @@ if wantMod ~= "" and current ~= wantMod and (wantModAlt == "" or current ~= want
   return
 end
 
-Engine.SetDvar("nzw_autostart", 0)
+-- The title screen has no session mode (eModes INVALID = 3); loading a ZM
+-- map from there crashes on missing ZM HUD assets. Switch to Zombies first,
+-- the way boiii does before joining a server (Com_SwitchMode).
+local MODE_ZOMBIES = 0
+
+local function sessionMode()
+  local ok, mode = pcall(Engine.CurrentSessionMode)
+  return ok and tonumber(mode) or -1
+end
+
+local function addTimer(ms, fn)
+  for _, rootName in ipairs({ "UIRootFull", "UIRoot0" }) do
+    local ok = pcall(function()
+      LUI.roots[rootName]:addElement(LUI.UITimer.newElementTimer(ms, true, fn))
+    end)
+    if ok then
+      return rootName
+    end
+  end
+  return nil
+end
 
 local delay = dvarInt("nzw_autostart_delay")
 if delay <= 0 then
@@ -85,30 +105,91 @@ end
 
 local fired = false
 local function launch()
-  if fired then
+  if fired or dvarInt("nzw_autostart") ~= 1 then
     return
   end
   fired = true
-  status("ran: " .. mapCmd .. " " .. mapName)
+  Engine.SetDvar("nzw_autostart", 0)
+  status("ran: " .. mapCmd .. " " .. mapName .. " (sessionMode=" .. sessionMode() .. ")")
   Engine.Exec(0, mapCmd .. " " .. mapName)
 end
 
--- Give the frontend a moment to finish initialising before changing level.
--- UIRootFull ticks on the title screen; UIRoot0 (per-controller) may not
--- until a player presses Start, so it is only a backup.
-local attached = {}
-for _, rootName in ipairs({ "UIRootFull", "UIRoot0" }) do
-  local ok = pcall(function()
-    local root = LUI.roots[rootName]
-    root:addElement(LUI.UITimer.newElementTimer(delay, true, launch))
-  end)
-  if ok then
-    table.insert(attached, rootName)
+local function scheduleLaunch()
+  local root = addTimer(delay, launch)
+  if root then
+    status("waiting " .. delay .. "ms (" .. root .. ") to run " .. mapCmd .. " " .. mapName)
+  else
+    launch()
   end
 end
 
-if #attached > 0 then
-  status("waiting " .. delay .. "ms (" .. table.concat(attached, "+") .. ") to run " .. mapCmd .. " " .. mapName)
-else
-  launch()
+if sessionMode() == MODE_ZOMBIES then
+  scheduleLaunch()
+  return
 end
+
+local modeTries = dvarInt("nzw_autostart_modetries")
+if modeTries >= 2 then
+  abort("could not switch to Zombies (sessionMode=" .. sessionMode() .. ", last: "
+    .. dvarString("nzw_autostart_modelog") .. ")")
+  return
+end
+Engine.SetDvar("nzw_autostart_modetries", modeTries + 1)
+
+local attempts = {}
+local function try(label, f, ...)
+  if type(f) ~= "function" then
+    attempts[#attempts + 1] = label .. ":missing"
+    return false
+  end
+  local ok, err = pcall(f, ...)
+  attempts[#attempts + 1] = label .. (ok and ":ok" or (":err " .. tostring(err)))
+  return ok
+end
+
+local controller = 0
+pcall(function()
+  controller = Engine.GetPrimaryController() or 0
+end)
+
+-- 1) Navigate the lobby VM into the local Zombies lobby, like the menu does.
+local target = nil
+pcall(function()
+  target = LobbyData.UITargets.UI_ZMLOBBYLANGAME
+end)
+local switched = false
+if target ~= nil then
+  switched = try("GoForward", Engine.LobbyVM_CallFunc, "GoForward",
+    { controller = controller, toTarget = target })
+else
+  attempts[#attempts + 1] = "UI_ZMLOBBYLANGAME:missing"
+end
+-- 2) Fall back to switching the session mode directly.
+if not switched then
+  switched = try("SwitchMode(c,'zm')", Engine.SwitchMode, controller, "zm")
+    or try("SwitchMode(c,0)", Engine.SwitchMode, controller, MODE_ZOMBIES)
+end
+
+local log = table.concat(attempts, "; ")
+Engine.SetDvar("nzw_autostart_modelog", log)
+status("switching to Zombies: " .. log)
+
+-- If the switch reloads the frontend this script runs again in ZM mode.
+-- Otherwise poll a few times for the mode change.
+local polls = 0
+local function poll()
+  if fired or dvarInt("nzw_autostart") ~= 1 then
+    return
+  end
+  if sessionMode() == MODE_ZOMBIES then
+    scheduleLaunch()
+    return
+  end
+  polls = polls + 1
+  if polls >= 8 then
+    abort("still sessionMode=" .. sessionMode() .. " after switch attempts: " .. log)
+    return
+  end
+  addTimer(1000, poll)
+end
+addTimer(1000, poll)

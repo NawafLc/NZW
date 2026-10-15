@@ -110,6 +110,7 @@ def build_plan(settings: Settings, map_item: ContentItem, mod_item: ContentItem 
             args.append("-windowed")
         args += _set("nzw_autostart", 1)
         args += _set("nzw_autostart_tries", 0)
+        args += _set("nzw_autostart_modetries", 0)
         args += _set("nzw_autostart_map", map_item.folder_name)
         args += _set("nzw_autostart_cmd", settings.map_command)
         args += _set("nzw_autostart_delay", settings.autostart_delay_ms)
